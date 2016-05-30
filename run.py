@@ -19,13 +19,17 @@ GPIO.setup(args.PIR, GPIO.IN)
 GPIO.add_event_detect(args.PIR, GPIO.RISING)
 lightcontrol = LightControl(args.IP, 5577)
 
-time_to_turn_off = time  = datetime.now()
+time_to_turn_off = current_time  = datetime.now()
 print("Starting System")
 print("Offset is set at {} minutes.".format(args.offset))
 while True:
-    if time >= time_to_turn_off:
-        lightcontrol.turn_off()
-    if GPIO.event_detected(args.PIR):
-        time_to_turn_off = datetime.now() + timedelta(minutes=args.offset) 
-        lightcontrol.turn_on()
-    time = datetime.now()
+    try:
+        if current_time >= time_to_turn_off:
+            lightcontrol.turn_off()
+        if GPIO.event_detected(args.PIR):
+            time_to_turn_off = datetime.now() + timedelta(minutes=args.offset) 
+            lightcontrol.turn_on()
+            time.sleep(1)
+        current_time = datetime.now()
+    except:
+        lightcontrol = LightControl(args.IP, 5577)
