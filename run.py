@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from light import LightControl
-import Adafruit_BBIO.GPIO as GPIO
+from Adafruit_BBIO import GPIO
 from datetime import datetime, timedelta
 import time
 import argparse
@@ -19,17 +19,22 @@ GPIO.setup(args.PIR, GPIO.IN)
 GPIO.add_event_detect(args.PIR, GPIO.RISING)
 lightcontrol = LightControl(args.IP, 5577)
 
-time_to_turn_off = current_time  = datetime.now()
+turn_off_time = current_time  = datetime.now()
 print("Starting System")
 print("Offset is set at {} minutes.".format(args.offset))
 while True:
     try:
-        if current_time >= time_to_turn_off:
+        if current_time >= turn_off_time:
             lightcontrol.turn_off()
         if GPIO.event_detected(args.PIR):
-            time_to_turn_off = datetime.now() + timedelta(minutes=args.offset) 
+            turn_off_time = datetime.now() + timedelta(minutes=args.offset) 
             lightcontrol.turn_on()
             time.sleep(1)
-        current_time = datetime.now()
+            current_time = datetime.now()
+    except socket.error:
+        try:
+            lightcontrol = LightControl(args.IP, 5577)
+        except socket.error:
+            time.sleep(60)
     except:
-        lightcontrol = LightControl(args.IP, 5577)
+        print("Unexpected error")
