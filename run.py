@@ -29,12 +29,10 @@ while True:
         if GPIO.event_detected(args.PIR):
             turn_off_time = datetime.now() + timedelta(minutes=args.offset) 
             lightcontrol.turn_on()
-            time.sleep(1)
-            current_time = datetime.now()
-    except socket.error:
+        current_time = datetime.now()
+        time.sleep(1)
+    except:
         try:
             lightcontrol = LightControl(args.IP, 5577)
-        except socket.error:
-            time.sleep(60)
-    except:
-        print("Unexpected error")
+        except:
+            time.sleep(30)
