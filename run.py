@@ -27,12 +27,12 @@ while True:
         if current_time >= turn_off_time:
             lightcontrol.turn_off()
         if GPIO.event_detected(args.PIR):
-            turn_off_time = datetime.now() + timedelta(minutes=args.offset) 
             lightcontrol.turn_on()
+            turn_off_time = datetime.now() + timedelta(minutes=args.offset)
         current_time = datetime.now()
         time.sleep(1)
     except:
         try:
             lightcontrol = LightControl(args.IP, 5577)
         except:
-            time.sleep(30)
+            time.sleep(15)
